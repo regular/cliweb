@@ -3,16 +3,21 @@
 qs = require 'qs'
 {exec} = require 'child_process'
 {inspect} = require 'util'
+cheerio = require 'cheerio'
+request = require 'superagent'
 
 args = process.argv.splice(2)
 url = null
 key = null
 query = {}
+selector = null
 
 while args.length
 	a = args.shift()
 	if a is "--url"
 		url = args.shift()
+	else if a is "--select"
+		selector = args.shift()
 	else if a is "--key"
 		key = args.shift()
 		query[key] = ""
@@ -28,6 +33,22 @@ if not url?
 url = url + qs.stringify query
 console.log "opening", url
 
-exec "open #{url}", (err) ->
-	if err?
-		console.error "failed to exec: #{err}"
+if selector?
+	console.log "selector is", selector
+	request
+		.get(url)
+		.end (err, res) ->
+			if err?
+				console.error err
+				process.exit 1
+			$ = cheerio.load res.text
+			elements = $ selector
+			if elements.length is 0
+				console.error "nothing selected"
+				process.exit 1
+			for e in elements
+				console.log $(e).html()
+else
+	exec "open #{url}", (err) ->
+		if err?
+			console.error "failed to exec: #{err}"
