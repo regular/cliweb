@@ -1,0 +1,15 @@
+{
+  "name": "cliweb",
+  "version": "0.1.0",
+  "description": "launches the browser from the command line and passes arguments in the URL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "jan@lagomorph.de",
+  "license": "BSD",
+  "dependencies": {
+    "qs": "~0.5.3"
+  }
+}

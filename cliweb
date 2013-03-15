@@ -1,0 +1,33 @@
+#!/usr/bin/env coffee
+
+qs = require 'qs'
+{exec} = require 'child_process'
+{inspect} = require 'util'
+
+args = process.argv.splice(2)
+url = null
+key = null
+query = {}
+
+while args.length
+	a = args.shift()
+	if a is "--url"
+		url = args.shift()
+	else if a is "--key"
+		key = args.shift()
+		query[key] = ""
+	else
+		if query[key].length
+			a = " " + a
+		query[key] += a
+
+if not url?
+	console.error "no --url given"
+	process.exit 1
+
+url = url + qs.stringify query
+console.log "opening", url
+
+exec "open #{url}", (err) ->
+	if err?
+		console.error "failed to exec: #{err}"
